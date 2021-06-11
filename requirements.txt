@@ -1,0 +1,2 @@
+celery[redis]==5.1.0
+sourmash==4.1.2
