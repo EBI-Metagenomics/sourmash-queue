@@ -23,6 +23,8 @@ Setup
     ```shell
     wget https://download.redis.io/releases/redis-6.2.4.tar.gz
     tar xvfs redis-6.2.4.tar.gz
+    cd redis-6.2.4
+    make
     ```
    Edit its config to make it available from a different VM and disable protected-mode.
 
