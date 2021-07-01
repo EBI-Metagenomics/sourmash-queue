@@ -1,8 +1,8 @@
 from celery import Celery
 import csv
-from sourmash.sourmash_args import load_query_signature, load_file_as_signatures, load_dbs_and_sigs, FileOutputCSV, \
+from sourmash.sourmash_args import load_query_signature, load_dbs_and_sigs, FileOutputCSV, \
     get_moltype
-from sourmash.search import GatherResult, format_bp, gather_databases
+from sourmash.search import format_bp, gather_databases
 from sourmash.commands import SaveSignaturesToLocation
 from settings import *
 
@@ -25,7 +25,7 @@ fieldnames = ['intersect_bp', 'f_orig_query', 'f_match',
 
 
 @app.task(bind=True)
-def run_gather(self, query_filename):
+def run_gather(self, query_filename, original_filename):
     # adapting from sourmash gather command 4.1.2
     # https://github.com/sourmash-bio/sourmash/blob/01de852439153267b7956e818fd90bb26c87e0ac/src/sourmash/commands.py#L614
 
@@ -38,7 +38,7 @@ def run_gather(self, query_filename):
     # is_abundance = False
     ignore_abundance = False
 
-    query = load_query_signature(query_filename, ksize=31, select_moltype=moltype)
+    query = load_query_signature(f"{QUERIES_PATH}{query_filename}", ksize=31, select_moltype=moltype)
 
     notify(f'loaded query: {str(query)[:30]}... (k={query.minhash.ksize}, {get_moltype(query)})')
 
@@ -86,24 +86,30 @@ def run_gather(self, query_filename):
     for result, weighted_missed, next_query in gather_iter:
         pct_query = '{:.1f}%'.format(result.f_unique_weighted * 100)
         pct_genome = '{:.1f}%'.format(result.f_match * 100)
-        name = result.match._display_name(40)
+        name = result.match.filename
         if not len(found):  # first result?
             first_match = {
                 "overlap": format_bp(result.intersect_bp),
                 "p_query": pct_query,
                 "p_match": pct_genome,
-                "name": name,
+                "match": name,
+                "query_filename": original_filename,
+                "md5_name": query_filename,
             }
-        found.append(result)
-    if len(found) == 0:
-        return "NO_RESULTS"
-    else:
-        with FileOutputCSV(f"{RESULTS_PATH}{self.request.id}.csv") as fp:
-            w = csv.DictWriter(fp, fieldnames=fieldnames, extrasaction='ignore')
-            w.writeheader()
-            for result in found:
-                d = dict(result._asdict())
-                if "match" in d:
-                    del d['match']  # actual signature not in CSV.
-                    w.writerow(d)
-            return first_match
+            found.append(result)
+        if len(found) == 0:
+            return {
+                "status": "NO_RESULTS",
+                "query_filename": original_filename,
+                "md5_name": query_filename,
+            }
+        else:
+            with FileOutputCSV(f"{RESULTS_PATH}{self.request.id}.csv") as fp:
+                w = csv.DictWriter(fp, fieldnames=fieldnames, extrasaction='ignore')
+                w.writeheader()
+                for result in found:
+                    d = dict(result._asdict())
+                    if "match" in d:
+                        del d['match']  # actual signature not in CSV.
+                        w.writerow(d)
+                return first_match
