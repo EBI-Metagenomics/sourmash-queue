@@ -25,9 +25,12 @@ fieldnames = ['intersect_bp', 'f_orig_query', 'f_match',
 
 
 @app.task(bind=True)
-def run_gather(self, query_filename, original_filename):
+def run_gather(self, query_filename, original_filename, catalog):
     # adapting from sourmash gather command 4.1.2
     # https://github.com/sourmash-bio/sourmash/blob/01de852439153267b7956e818fd90bb26c87e0ac/src/sourmash/commands.py#L614
+
+    if catalog not in MAG_CATALOGS:
+        raise Exception(f"The request doesn't include a valid catalog. It has to be one of {MAG_CATALOGS.keys()}")
 
     moltype = 'DNA'
     cache_size = None
@@ -53,7 +56,7 @@ def run_gather(self, query_filename, original_filename):
         raise Exception('no query hashes!? exiting.')
 
     #
-    databases = load_dbs_and_sigs([SIGNATURES_PATH], query, False,
+    databases = load_dbs_and_sigs([MAG_CATALOGS[catalog]], query, False,
                                   cache_size=cache_size)
 
     if not len(databases):
@@ -112,4 +115,4 @@ def run_gather(self, query_filename, original_filename):
                     if "match" in d:
                         del d['match']  # actual signature not in CSV.
                         w.writerow(d)
-                return first_match
+        return first_match

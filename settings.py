@@ -4,10 +4,16 @@ BASE_PATH = "./"
 # Folder where the signatures to use as query are going to be
 QUERIES_PATH = f"{BASE_PATH}/queries/"
 
-# The index file that hold the inormations of the signatures to search against
-SIGNATURES_PATH = f"{BASE_PATH}/signatures/genomes_index.sbt.json"
+# The The folder wher the signatures of all the catalog are stored
+SIGNATURES_PATH = f"{BASE_PATH}/signatures/"
+
 # Folder where the results of sourmash are going to be stored
 RESULTS_PATH = f"{BASE_PATH}/results/"
+
+# The currently supported catalogs
+MAG_CATALOGS = {
+    "HGUT": f"{SIGNATURES_PATH}HGUT/genomes_index.sbt.json"
+}
 
 # Path to the broker URL to run celery. Defaults to use redix in localhost
 CELERY_BROKER_PATH = "redis://localhost:6379/0"
