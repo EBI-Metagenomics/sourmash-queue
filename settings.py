@@ -19,3 +19,6 @@ MAG_CATALOGS = {
 CELERY_BROKER_PATH = "redis://localhost:6379/0"
 # Path to the backend URL to run celery. Defaults to use redix in localhost
 CELERY_BACKEND_PATH = "redis://localhost:6379/1"
+
+# The names of the sourmash files are GUT_GENOME* but the MGnify ID is MGYG-HGUT-* This files is a mapping between this 2 accessions
+MAP_NAMES_PATH = f"{BASE_PATH}/genomes-gut_metadata.json"

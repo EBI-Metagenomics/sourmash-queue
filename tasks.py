@@ -1,5 +1,6 @@
 from celery import Celery
 import csv
+import json
 from sourmash.sourmash_args import load_query_signature, load_dbs_and_sigs, FileOutputCSV, \
     get_moltype
 from sourmash.search import format_bp, gather_databases
@@ -7,6 +8,18 @@ from sourmash.commands import SaveSignaturesToLocation
 from settings import *
 
 DEBUG = True
+
+name_map = None
+with open(MAP_NAMES_PATH, 'r') as jsonfile:
+    name_map = json.load(jsonfile)
+
+
+def get_accession_from_filename(filename):
+    accesion = filename[filename.rfind("/")+1:].replace(".fa","")
+    if accesion.startswith("GUT_"):
+        if accesion in name_map:
+            return name_map[accesion]
+    return accesion
 
 
 def notify(text):
@@ -98,7 +111,7 @@ def run_gather(self, query_filename, original_filename, catalog):
                 "overlap": format_bp(result.intersect_bp),
                 "p_query": pct_query,
                 "p_match": pct_genome,
-                "match": name,
+                "match": get_accession_from_filename(name),
                 "catalog": catalog,
                 "query_filename": original_filename,
                 "md5_name": query_filename,
