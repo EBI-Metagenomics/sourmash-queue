@@ -15,6 +15,9 @@ def notify(text):
 
 
 app = Celery('tasks', broker=CELERY_BROKER_PATH, backend=CELERY_BACKEND_PATH)
+app.conf.update(
+   result_extended=True
+)
 
 fieldnames = ['intersect_bp', 'f_orig_query', 'f_match',
               'f_unique_to_query', 'f_unique_weighted',
@@ -96,6 +99,7 @@ def run_gather(self, query_filename, original_filename, catalog):
                 "p_query": pct_query,
                 "p_match": pct_genome,
                 "match": name,
+                "catalog": catalog,
                 "query_filename": original_filename,
                 "md5_name": query_filename,
             }
@@ -103,6 +107,7 @@ def run_gather(self, query_filename, original_filename, catalog):
         if len(found) == 0:
             return {
                 "status": "NO_RESULTS",
+                "catalog": catalog,
                 "query_filename": original_filename,
                 "md5_name": query_filename,
             }
