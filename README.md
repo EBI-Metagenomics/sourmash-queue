@@ -39,3 +39,9 @@ Setup
    nohup celery -A tasks worker --loglevel=INFO > celery.log &
     ```
    **⚠️TODO**: Setup this as a [systemd](https://docs.celeryproject.org/en/latest/userguide/daemonizing.html?highlight=celerybeat#usage-systemd) or something more reliable
+
+6. [Optional] Setup the web monitoring tool [flower](https://flower.readthedocs.io/). You can use to see the running/pending tasks and workers on http://[host]:5555
+    ```shell
+   nohup celery -A tasks flower &
+    ```
+   **⚠️TODO**: Setup this as a [systemd](https://docs.celeryproject.org/en/latest/userguide/daemonizing.html?highlight=celerybeat#usage-systemd) or something more reliable
