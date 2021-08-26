@@ -57,6 +57,7 @@ def run_gather(self, query_filename, original_filename, catalog):
     # is_abundance = False
     ignore_abundance = False
 
+    notify(f"LOADING: [{QUERIES_PATH}{query_filename}]")
     query = load_query_signature(f"{QUERIES_PATH}{query_filename}", ksize=31, select_moltype=moltype)
 
     notify(f'loaded query: {str(query)[:30]}... (k={query.minhash.ksize}, {get_moltype(query)})')
@@ -116,21 +117,21 @@ def run_gather(self, query_filename, original_filename, catalog):
                 "query_filename": original_filename,
                 "md5_name": query_filename,
             }
-            found.append(result)
-        if len(found) == 0:
-            return {
-                "status": "NO_RESULTS",
-                "catalog": catalog,
-                "query_filename": original_filename,
-                "md5_name": query_filename,
-            }
-        else:
-            with FileOutputCSV(f"{RESULTS_PATH}{self.request.id}.csv") as fp:
-                w = csv.DictWriter(fp, fieldnames=fieldnames, extrasaction='ignore')
-                w.writeheader()
-                for result in found:
-                    d = dict(result._asdict())
-                    if "match" in d:
-                        del d['match']  # actual signature not in CSV.
-                        w.writerow(d)
+        found.append(result)
+    if len(found) > 0:
+        with FileOutputCSV(f"{RESULTS_PATH}{self.request.id}.csv") as fp:
+            w = csv.DictWriter(fp, fieldnames=fieldnames, extrasaction='ignore')
+            w.writeheader()
+            for result in found:
+                d = dict(result._asdict())
+                if "match" in d:
+                    del d['match']  # actual signature not in CSV.
+                    w.writerow(d)
+        first_match['matches'] = len(found)
         return first_match
+    return {
+        "status": "NO_RESULTS",
+        "catalog": catalog,
+        "query_filename": original_filename,
+        "md5_name": query_filename,
+    }
