@@ -22,3 +22,6 @@ CELERY_BACKEND_PATH = "redis://localhost:6379/1"
 
 # The names of the sourmash files are GUT_GENOME* but the MGnify ID is MGYG-HGUT-* This files is a mapping between this 2 accessions
 MAP_NAMES_PATH = f"{BASE_PATH}/genomes-gut_metadata.json"
+
+# Saved results in redis will expire on
+RESULTS_EXPIRE = 60 * 60 * 24 * 30  # 30 days

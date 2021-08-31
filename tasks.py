@@ -29,7 +29,8 @@ def notify(text):
 
 app = Celery('tasks', broker=CELERY_BROKER_PATH, backend=CELERY_BACKEND_PATH)
 app.conf.update(
-   result_extended=True
+   result_extended=True,
+   result_expires=RESULTS_EXPIRE,
 )
 
 fieldnames = ['intersect_bp', 'f_orig_query', 'f_match',
