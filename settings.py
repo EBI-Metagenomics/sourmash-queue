@@ -12,7 +12,7 @@ RESULTS_PATH = f"{BASE_PATH}/results/"
 
 # The currently supported catalogs
 MAG_CATALOGS = {
-    "HGUT": f"{SIGNATURES_PATH}HGUT/genomes_index.sbt.json"
+    "human-gut-v1-0": f"{SIGNATURES_PATH}HGUT/genomes_index.sbt.json"
 }
 
 # Path to the broker URL to run celery. Defaults to use redix in localhost
@@ -20,7 +20,7 @@ CELERY_BROKER_PATH = "redis://localhost:6379/0"
 # Path to the backend URL to run celery. Defaults to use redix in localhost
 CELERY_BACKEND_PATH = "redis://localhost:6379/1"
 
-# The names of the sourmash files are GUT_GENOME* but the MGnify ID is MGYG-HGUT-* This files is a mapping between this 2 accessions
+# The names of the sourmash files are GUT_GENOME* but the MGnify ID is MGYG-HGUT-* This file is a mapping between this 2 accessions
 MAP_NAMES_PATH = f"{BASE_PATH}/genomes-gut_metadata.json"
 
 # Saved results in redis will expire on
