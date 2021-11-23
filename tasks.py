@@ -15,7 +15,7 @@ with open(MAP_NAMES_PATH, 'r') as jsonfile:
 
 
 def get_accession_from_filename(filename):
-    accesion = filename[filename.rfind("/")+1:].replace(".fa","")
+    accesion = filename[filename.rfind("/")+1:].replace(".fa","").replace(".fna","")
     if accesion.startswith("GUT_"):
         if accesion in name_map:
             return name_map[accesion]
