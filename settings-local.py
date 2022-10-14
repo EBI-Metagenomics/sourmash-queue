@@ -12,7 +12,7 @@ RESULTS_PATH = f"{BASE_PATH}/results/"
 
 # The currently supported catalogs
 MAG_CATALOGS = {
-    "human-gut-v2-0": f"{SIGNATURES_PATH}human-gut-v2-0/genomes_index.sbt.json"
+    "human-gut-v2-0": f"{SIGNATURES_PATH}human-gut-v2-0/genomes_index.sbt.json",
 }
 
 # Path to the broker URL to run celery. Defaults to use redix in localhost
